@@ -1,6 +1,8 @@
 # tatoo
 TAlend deployment TOOls, (or something like Tool Acting on Talend Open Operations), a command-line client to operate on Talend environement to install, start/stop, deploy, uninstal undeploy and monitor a Talend application.
 Tatoo supports Talend 6.4, but should work with Talend 6.x
+[![Build Status](https://travis-ci.org/dutoitc/tatoo.svg?branch=master)](https://travis-ci.org/dutoitc/tatoo)
+
 
 # Conventions
 - Nexus releases are stored/read in repositories/releases
