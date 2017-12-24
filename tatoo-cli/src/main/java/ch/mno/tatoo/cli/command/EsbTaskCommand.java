@@ -48,7 +48,8 @@ public class EsbTaskCommand extends AbstractCommand {
         try {
             switch (args.get(0)) {
                 case "start":
-                    buildTACFacade().startEsbTasks(regex, reporter, true, true);
+                    buildTACFacade().startEsbTasks(regex, reporter, true, false);
+                    buildTACFacade().startEsbTasks(regex, reporter, false, true);
                     break;
                 case "start:services":
                     buildTACFacade().startEsbTasks(regex, reporter, true, false);
@@ -57,7 +58,8 @@ public class EsbTaskCommand extends AbstractCommand {
                     buildTACFacade().startEsbTasks(regex, reporter, false, true);
                     break;
                 case "stop":
-                    buildTACFacade().stopEsbTasks(regex, reporter, true, true);
+                    buildTACFacade().stopEsbTasks(regex, reporter, false, true);
+                    buildTACFacade().stopEsbTasks(regex, reporter, true, false);
                     break;
                 case "stop:services":
                     buildTACFacade().stopEsbTasks(regex, reporter, true, false);

@@ -113,6 +113,18 @@ public class CleanupCommand extends AbstractCommand {
         // ---------------------------------------------------------------------------------------------------
 
         if (!properties.isDryRun()) {
+
+            // TAC: execution plans
+            plansToBeDeleted.forEach(plan -> {
+                try {
+                    tacFacade.deletePlan(plan.getPlanId());
+                    reporter.logInfo("Supprimé le plan " + plan.getLabel());
+                } catch (Exception e) {
+                    reporter.logError("Erreur à la suppresion du plan " + plan.getLabel());
+                }
+            });
+
+
             // TAC: Delete TASK (jobs)
             tasksToBeDeleted.forEach(t -> {
                 try {
@@ -131,16 +143,6 @@ public class CleanupCommand extends AbstractCommand {
                     reporter.logInfo("Suprimé l'EsbTask " + task.getLabel() + " (" + task.getApplicationType() + ")");
                 } catch (Exception e) {
                     reporter.logError("Erreur à la suppresion de l'EsbTask " + task.getLabel());
-                }
-            });
-
-            // TAC: execution plans
-            plansToBeDeleted.forEach(plan -> {
-                try {
-                    tacFacade.deletePlan(plan.getPlanId());
-                    reporter.logInfo("Supprimé le plan " + plan.getLabel());
-                } catch (Exception e) {
-                    reporter.logError("Erreur à la suppresion du plan " + plan.getLabel());
                 }
             });
 
