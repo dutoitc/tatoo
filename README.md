@@ -1,5 +1,6 @@
 # tatoo
 TAlend deployment TOOls, (or something like Tool Acting on Talend Open Operations), a command-line client to operate on Talend environement to install, start/stop, deploy, uninstal undeploy and monitor a Talend application.
+Tatoo supports Talend 6.4, but should work with Talend 6.x
 
 # Conventions
 - Nexus releases are stored/read in repositories/releases
@@ -90,6 +91,17 @@ Syntaxe:
 - undeploy:routes [regex]
 - undeploy:services [regex]
 Undeploy routes and services (already installed). The esbTasks are not cleaned. (See clean for that)
+
+
+# Typical usage
+Here is a good workflow:
+- build
+- cleanup
+- install
+- deploy
+- start:routes (services are started on deploy by Talend/Karaf)
+- cron
+- status
 
 
 # Extending Tatoo
