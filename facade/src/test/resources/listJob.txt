@@ -1,0 +1,8 @@
+[C_SelectionCryptoMonnaie]
+  [A_Commun]
+    DetectionDoublonsSysteme
+    SelectionAnnoncesCoinRechercheNET
+[D_Routage]
+  [A_Commun]
+    SOCLE_TransfertBitcoin
+    SOCLE_TransfertLitecoin

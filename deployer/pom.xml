@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<!-- BEGIN_LVERSION -->
+	<parent>
+		<groupId>ch.mno.tatoo</groupId>
+		<artifactId>base</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../base</relativePath>
+	</parent>
+	<!-- END_LVERSION -->
+	<artifactId>deployer</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>ch.mno.tatoo</groupId>
+			<artifactId>facade</artifactId>
+			<version>${project.parent.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.0.13</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<!--<fileName>${project.artifactId}-${project.version}-${buildNumber}</fileName>-->
+		<plugins>
+		<plugin>
+		<artifactId>maven-assembly-plugin</artifactId>
+		<version>2.5.5</version>
+		<configuration>
+			<descriptors>
+				<descriptor>assembly.xml</descriptor>
+			</descriptors>
+		</configuration>
+		</plugin>
+		</plugins>
+	</build>
+
+</project>
