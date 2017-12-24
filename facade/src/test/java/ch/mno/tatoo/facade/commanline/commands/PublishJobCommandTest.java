@@ -23,7 +23,7 @@ public class PublishJobCommandTest {
         command.setGroupId("ch.mno.tatoo.app");
         command.setLastData("dummy");
         Assert.assertEquals("publishJob aName --artifact-repository null/content/repositories/releases --username tom --password pouce --version 12.34 -pv 56.78 --group ch.mno.tatoo.app.A_alpha.B_beta --artifactId aName --type standalone", command.build());
-        Assert.assertEquals("Job A_alpha.B_beta:aJob:12.37", job.toString());
+        Assert.assertEquals("Job A_alpha.B_beta:aName:12.37", job.toString());
     }
 
     @Test
