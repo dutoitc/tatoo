@@ -89,7 +89,9 @@ public class Main {
         // Build jobs
         JobBuilder jobBuilder = new JobBuilder(context, publishedVersion, cmdline);
         List<Job> jobsToDeploy = svnVersionsFinder.findJobsInMajorVersion(context.getSourcePattern(), cmdline, mh);
-        jobsToDeploy = jobsToDeploy.stream().filter(o->Pattern.compile(regex).matcher(o.getName()).find()).collect(Collectors.toList());
+        jobsToDeploy = jobsToDeploy.stream()
+                .filter(o->Pattern.compile(regex).matcher(o.getFullName()).find() || Pattern.compile(regex).matcher(o.getName()).find())
+                .collect(Collectors.toList());
         for (Job job : jobsToDeploy) {
             if (!shouldDeployJob(job)) {
                 LOG.info("Skipping job which is not to be deployed: " + job.getName());
@@ -106,7 +108,9 @@ public class Main {
         // Build services
         ServiceBuilder serviceBuilder = new ServiceBuilder(context, publishedVersion, cmdline);
         List<Service> servicesToDeploy = svnVersionsFinder.findServicesInMajorVersion(context.getSourcePattern(), cmdline, mh);
-        servicesToDeploy = servicesToDeploy.stream().filter(o->Pattern.compile(regex).matcher(o.getName()).find()).collect(Collectors.toList());
+        servicesToDeploy = servicesToDeploy.stream()
+                .filter(o->Pattern.compile(regex).matcher(o.getFullName()).find() || Pattern.compile(regex).matcher(o.getName()).find())
+                .collect(Collectors.toList());
         for (Service service : servicesToDeploy) {
             if (nexusEntries.stream().filter(n->n.getArtifactId().equals(service.getName()) && n.getRelease().equals(publishedVersion)).count()>0) {
                 report.addError("Ignoring service already on Nexus: " + service.getName());
@@ -118,7 +122,9 @@ public class Main {
         // Build routes
         RouteBuilder routeBuilder = new RouteBuilder(context, publishedVersion, cmdline);
         List<Route> routesToDeploy = svnVersionsFinder.findRoutesInMajorVersion(context.getSourcePattern(), cmdline);
-        routesToDeploy = routesToDeploy.stream().filter(o->Pattern.compile(regex).matcher(o.getName()).find()).collect(Collectors.toList());
+        routesToDeploy = routesToDeploy.stream()
+                .filter(o->Pattern.compile(regex).matcher(o.getFullName()).find() || Pattern.compile(regex).matcher(o.getName()).find())
+                .collect(Collectors.toList());
         for (Route route : routesToDeploy) {
             if (nexusEntries.stream().filter(n->n.getArtifactId().equals(route.getName()) && n.getRelease().equals(publishedVersion)).count()>0) {
                 report.addError("Ignoring route already on Nexus: " + route.getName());
