@@ -70,17 +70,23 @@ public class TatooCliMain {
 
 
         // Run
-        for (AbstractCommand command: commands) {
-            if (command.canHandle(argsMod)) {
-                reporter.showWelcomeMessage();
-                long t0 = System.currentTimeMillis();
-                command.handle(argsMod);
-                reporter.logTrace("Command " + command.getClass().getSimpleName()+" terminée en " + (System.currentTimeMillis()-t0)/1000 + "s.");
-                reporter.showGoodbyeMessage();
-                System.exit(0);
+        try {
+            for (AbstractCommand command : commands) {
+                if (command.canHandle(argsMod)) {
+                    reporter.showWelcomeMessage();
+                    long t0 = System.currentTimeMillis();
+                    command.handle(argsMod);
+                    reporter.logTrace("Command " + command.getClass().getSimpleName() + " finished in " + (System.currentTimeMillis() - t0) / 1000 + "s.");
+                    reporter.showGoodbyeMessage();
+                    System.exit(0);
+                }
             }
+            System.err.println("Invalid command: " + argsMod);
+        } catch (Exception e) {
+            System.err.println("Error on run: " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
         }
-        System.err.println("Commande non reconnue: " + argsMod);
     }
 
 
