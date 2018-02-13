@@ -1,22 +1,9 @@
 package ch.mno.tatoo.facade.tac;
 
 import ch.mno.tatoo.common.reporters.Reporter;
-import ch.mno.tatoo.facade.tac.commands.RequestDeployTaskCommand;
+import ch.mno.tatoo.facade.tac.commands.*;
 import ch.mno.tatoo.facade.tac.data.ExecutionPlan;
 import ch.mno.tatoo.facade.tac.data.JobTask;
-import ch.mno.tatoo.facade.tac.commands.AbstractCommand;
-import ch.mno.tatoo.facade.tac.commands.CreateCronTriggerCommand;
-import ch.mno.tatoo.facade.tac.commands.DeletePlanCommand;
-import ch.mno.tatoo.facade.tac.commands.DeleteTaskCommand;
-import ch.mno.tatoo.facade.tac.commands.GetTasksRelatedToJobsCommand;
-import ch.mno.tatoo.facade.tac.commands.ListESBTasksCommand;
-import ch.mno.tatoo.facade.tac.commands.ListExecutionPlansCommand;
-import ch.mno.tatoo.facade.tac.commands.ListTasksCommand;
-import ch.mno.tatoo.facade.tac.commands.RequestDeployEsbTaskCommand;
-import ch.mno.tatoo.facade.tac.commands.RequestUndeployEsbTaskCommand;
-import ch.mno.tatoo.facade.tac.commands.SaveESBTaskCommand;
-import ch.mno.tatoo.facade.tac.commands.StartEsbTaskCommand;
-import ch.mno.tatoo.facade.tac.commands.StopEsbTaskCommand;
 import ch.mno.tatoo.facade.tac.data.ESBTask;
 import ch.mno.tatoo.facade.tac.data.FEATURE_TYPE;
 import org.json.simple.JSONObject;
@@ -252,6 +239,16 @@ public class TACFacade {
         command.setMonths(months);
         command.setYears(years);
         execute(command);
+    }
+
+    public void createTag(String projectName, String version, Reporter reporter) {
+        try {
+            CreateTagCommand command = new CreateTagCommand(projectName, version);
+            execute(command);
+            reporter.logInfo("Tag created: " + version + " on project " + projectName);
+        } catch (Exception e) {
+            reporter.logError("Cannot create tag " + version + ": " + e.getMessage());
+        }
     }
 
     public long getTaskIdByName(String taskName) throws URISyntaxException, IOException, CallException {

@@ -42,12 +42,14 @@ import org.json.simple.JSONObject;
  */
 public class CreateTaskCommand extends AbstractCommand<Void> {
 
+    private String projectName;
     private String jobName;
 	private String jobVersion;
     private final String serverLabel;
 
-	public CreateTaskCommand(String jobName, String jobVersion, String serverLabel) {
+	public CreateTaskCommand(String projectName, String jobName, String jobVersion, String serverLabel) {
 		super("createTask");
+        this.projectName = projectName;
 		this.jobName = jobName;
 		this.jobVersion = jobVersion;
         this.serverLabel = serverLabel;
@@ -69,7 +71,7 @@ public class CreateTaskCommand extends AbstractCommand<Void> {
      obj.put("jobVersion", jobVersion);
      obj.put("onUnknownStateJob", "WAIT");
      obj.put("pauseOnError", false);
-     obj.put("projectName", "Tatoo");
+     obj.put("projectName", projectName);
      obj.put("regenerateJobOnChange", false);
      obj.put("taskName", "jobName");
      obj.put("timeout", 3600);
