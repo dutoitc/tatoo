@@ -14,7 +14,7 @@ import ch.ethz.ssh2.Session;
  */
 public class SSHShell implements DataListener {
 
-	private Logger LOG = LoggerFactory.getLogger(SSHShell.class);
+	private static Logger LOG = LoggerFactory.getLogger(SSHShell.class);
 	public static final int TIME_TO_WAIT_BEFORE_SENDING_DATA_MSEC = 100; // no data from server after this time will flush data to dataListener
 	private final int TIMEOUT = 10000;
 
@@ -147,10 +147,14 @@ public class SSHShell implements DataListener {
 						buffer = new StringBuilder();
 						lastReceiveTime = 0;
 					}
-					Thread.sleep(10); // Avoid DoS on server ;-)
+					try {
+						Thread.sleep(10); // Avoid DoS on server ;-)
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
-				catch (InterruptedException | IOException e) {
-					e.printStackTrace();
+				catch (IOException e) {
+					LOG.error(e.getMessage(), e);
 				}
 			}
 		}

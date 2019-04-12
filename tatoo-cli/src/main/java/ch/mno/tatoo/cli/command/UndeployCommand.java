@@ -9,11 +9,6 @@ import java.util.List;
  */
 public class UndeployCommand extends AbstractCommand {
 
-
-    public void postInit() {
-        super.postInit();
-    }
-
     @Override
     public List<UsageItem> getUsage() {
         return Arrays.asList(
@@ -21,12 +16,6 @@ public class UndeployCommand extends AbstractCommand {
                 new UsageItem("undeploy:routes [regex]", "Dé-Déploier les routes (déjà installées)"),
                 new UsageItem("undeploy:services [regex]", "Dé-Déploier les services, services (déjà installés)")
         );
-    }
-
-    @Override
-    public boolean canHandle(List<String> args) {
-        if (args.size() > 0 && args.get(0).startsWith("undeploy")) return true;
-        return false;
     }
 
     @Override

@@ -11,6 +11,16 @@ public class KarafElement {
     private String version;
     private String location;
 
+    public KarafElement() {
+    }
+
+    public KarafElement(String id, String state, String version, String location) {
+        this.id = id;
+        this.state = state;
+        this.version = version;
+        this.location = location;
+    }
+
     public String getId() {
         return id;
     }

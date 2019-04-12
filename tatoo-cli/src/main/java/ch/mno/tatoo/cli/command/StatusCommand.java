@@ -1,9 +1,9 @@
 package ch.mno.tatoo.cli.command;
 
-import ch.mno.tatoo.common.properties.RuntimeProperties;
 import ch.mno.tatoo.facade.envt.EnvironmentReportForActions;
 import ch.mno.tatoo.facade.envt.InstanceChecker;
 import ch.mno.tatoo.facade.envt.ServiceChecker;
+import ch.mno.tatoo.common.properties.RuntimeProperties;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,15 +17,10 @@ public class StatusCommand extends AbstractCommand {
     @Override
     public List<UsageItem> getUsage() {
         return Arrays.asList(
-                new UsageItem("status", "Affiche le status de Tatoo (instances et services).")
+                new UsageItem("status", "Affiche le status de RCEnt (instances et services).")
         );
     }
 
-    @Override
-    public boolean canHandle(List<String> args) {
-        if (args.size()==1 && args.get(0).equals("status")) return true;
-        return false;
-    }
 
     @Override
     public void handle(List<String> args) {
@@ -38,7 +33,7 @@ public class StatusCommand extends AbstractCommand {
     private void checkInstances() {
         EnvironmentReportForActions report = new EnvironmentReportForActions();
         String serverDS = properties.get(RuntimeProperties.PROPERTIES.SERVER_DS);
-        String serverMDM = properties.get(RuntimeProperties.PROPERTIES.SERVER_NET);
+        String serverMDM = properties.get(RuntimeProperties.PROPERTIES.SERVER_MDM);
         String tacSuffix = properties.get(RuntimeProperties.PROPERTIES.TAC_SUFFIX);
         new InstanceChecker(report).check(serverDS, serverMDM, tacSuffix);
 
@@ -50,9 +45,9 @@ public class StatusCommand extends AbstractCommand {
         List<String> blacklist = Arrays.asList(properties.get(RuntimeProperties.PROPERTIES.BLACKLIST).split(";"));
 
         EnvironmentReportForActions report = new EnvironmentReportForActions();
-        String dbUri = properties.get(RuntimeProperties.PROPERTIES.DB_URI);
-        String dbUser = properties.get(RuntimeProperties.PROPERTIES.DB_USERNAME);
-        String dbPass = properties.get(RuntimeProperties.PROPERTIES.DB_PASSWORD);
+        String dbUri = properties.get(RuntimeProperties.PROPERTIES.DB_CONF_URI);
+        String dbUser = properties.get(RuntimeProperties.PROPERTIES.DB_CONF_USERNAME);
+        String dbPass = properties.get(RuntimeProperties.PROPERTIES.DB_CONF_PASSWORD);
         String prefix = properties.get(RuntimeProperties.PROPERTIES.WEB_PREFIX);
         String serverDS = properties.get(RuntimeProperties.PROPERTIES.SERVER_DS);
         String serverEnv = properties.get(RuntimeProperties.PROPERTIES.ENV);

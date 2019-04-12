@@ -6,7 +6,9 @@ import ch.mno.tatoo.deployer.actions.SaveESBTaskAction;
 import ch.mno.tatoo.deployer.actions.SaveTaskAction;
 import ch.mno.tatoo.common.properties.RuntimeProperties;
 import ch.mno.tatoo.common.reporters.ConsoleReporter;
+import ch.mno.tatoo.facade.common.FacadeException;
 import ch.mno.tatoo.facade.karaf.KarafFacade;
+import ch.mno.tatoo.facade.karaf.KarafSSHFacade;
 import ch.mno.tatoo.facade.karaf.commands.GenericCommand;
 import ch.mno.tatoo.facade.karaf.data.KarafElement;
 import ch.mno.tatoo.facade.nexus.NexusEntry;
@@ -41,7 +43,7 @@ public class DeployerMain implements AutoCloseable {
                 runtimeProperties.get(RuntimeProperties.PROPERTIES.TAC_SERVER_USERNAME),
                 runtimeProperties.get(RuntimeProperties.PROPERTIES.TAC_SERVER_PASSWORD),
                 runtimeProperties.get(RuntimeProperties.PROPERTIES.TAC_SERVER_EMAIL));
-        karafFacade = new KarafFacade(
+        karafFacade = new KarafSSHFacade(
                 runtimeProperties.get(RuntimeProperties.PROPERTIES.KARAF_HOSTNAME),
                 runtimeProperties.getInt(RuntimeProperties.PROPERTIES.KARAF_PORT),
                 runtimeProperties.get(RuntimeProperties.PROPERTIES.KARAF_USERNAME),
@@ -91,13 +93,9 @@ public class DeployerMain implements AutoCloseable {
 			try {
                 tacFacade.deleteTask(t.getId(), true);
                 report.addKarafClean(t.getApplicationName());
-			} catch (CallException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
+            } catch (FacadeException e) {
+                e.printStackTrace();
+            }
 		});
 
     }
@@ -105,7 +103,7 @@ public class DeployerMain implements AutoCloseable {
     /**
      * Deploy every ESBTask of Nexus for a given version
      */
-    private void doModeDeploy(RuntimeProperties runtimeProperties, String version) throws InterruptedException, IOException, URISyntaxException, CallException {
+    private void doModeDeploy(RuntimeProperties runtimeProperties, String version) throws FacadeException {
         String includesStr = runtimeProperties.get("includes");
         if (includesStr==null) {throw new RuntimeException("Missing 'includes'");}
         String excludesStr = runtimeProperties.get("includes");
@@ -148,7 +146,7 @@ public class DeployerMain implements AutoCloseable {
      * @throws URISyntaxException
      * @throws InterruptedException
      */
-    private List<NexusEntry> findNexusEntries(List<String> includes, List<String> excludes, String version) throws IOException, URISyntaxException, InterruptedException {
+    private List<NexusEntry> findNexusEntries(List<String> includes, List<String> excludes, String version) throws FacadeException {
         // Identification des sources sur Nexus
         String nexusURL = runtimeProperties.get(RuntimeProperties.PROPERTIES.NEXUS_URL);
         LOG.info("Nexus source identifications on " + nexusURL);
@@ -201,7 +199,7 @@ public class DeployerMain implements AutoCloseable {
     /**
      * Delete ESBTask on TAC if present and deleteTask features, bundles from Karaf
      */
-    private void runCleanESBTaskAction(NexusEntry entry) throws IOException, CallException, URISyntaxException {
+    private void runCleanESBTaskAction(NexusEntry entry) throws FacadeException {
         CleanESBTaskAction cleanAction = new CleanESBTaskAction(tacFacade, karafFacade, runtimeProperties.isDryRun());
         tacFacade.getESBTasks().stream()
                 .filter(t -> t.getApplicationName().equals(entry.getArtifactId()))

@@ -18,11 +18,6 @@ public class KarafCleanAction extends AbstractKarafAction {
     private Pattern regex;
 
 
-    /**
-     *
-     * @param groupIdBase Ex: ch.mno.dummyapp ATTENTION: garde-fou pour ne pas désinstaller tous les bundles !
-     * @param regexStr
-     */
     public KarafCleanAction(String groupIdBase, String regexStr) {
         if (StringUtils.isEmpty(regexStr)) {
             throw new RuntimeException("Regex ne peut être vide");
@@ -67,7 +62,7 @@ public class KarafCleanAction extends AbstractKarafAction {
                 });
 
         // Désinstaller les features
-       /* Arrays.asList(executeCommand("feature:list -r | grep " + groupIdBase, transportBuilder).split("\n")).stream()
+        Arrays.asList(executeCommand("feature:list -r | grep " + groupIdBase, transportBuilder).split("\n")).stream()
                 .map(f -> f.split("│"))
                 .filter(f -> f.length == 5)
                 .peek(f -> reporter.logTrace("Uninstalling " + f[4]))
@@ -80,11 +75,11 @@ public class KarafCleanAction extends AbstractKarafAction {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                });*/
+                });
 
 
         // Désinstaller les repo-list
-        Arrays.asList(executeCommand("feature:repo-list | grep " + this.groupIdBase, transportBuilder).split("\n")).stream()
+        Arrays.asList(executeCommand("feature:repo-list | grep " + groupIdBase, transportBuilder).split("\n")).stream()
                 .filter(f-> regex.matcher(f).find())
                 .map(f -> f.split("│"))
                 .filter(f -> f.length == 2)

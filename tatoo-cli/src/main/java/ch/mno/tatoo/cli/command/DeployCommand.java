@@ -23,16 +23,16 @@ public class DeployCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean canHandle(List<String> args) {
-        if (args.size() > 0 && args.get(0).startsWith("deploy")) return true;
-        return false;
-    }
-
-    @Override
     public void handle(List<String> args) {
         if (args.size() < 1) return;
         if (args.size() < 2) throw new RuntimeException("Le regex est obligatoire");
         String regex = args.get(1);
+        if (regex.startsWith("'") && regex.endsWith("'")) {
+            regex = regex.substring(1, regex.length()-1);
+        }
+        if (regex.startsWith("\"") && regex.endsWith("\"")) {
+            regex = regex.substring(1, regex.length()-1);
+        }
 
         try {
             switch (args.get(0)) {

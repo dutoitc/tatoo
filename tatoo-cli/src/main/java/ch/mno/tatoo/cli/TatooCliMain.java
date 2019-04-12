@@ -9,7 +9,11 @@ import ch.mno.tatoo.common.reporters.OnlyStatusReporter;
 import ch.mno.tatoo.common.reporters.Reporter;
 
 import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -68,27 +72,67 @@ public class TatooCliMain {
         }
 
 
-
         // Run
+        reporter.showWelcomeMessage();
+        if (argsMod.size()==1 && argsMod.get(0).endsWith(".cli")) {
+            runManyCommands(argsMod.get(0), reporter, commands);
+        } else {
+            runOneCommand(reporter, argsMod, commands);
+        }
+    }
+
+    /** Run one command */
+    private static void runOneCommand(Reporter reporter, List<String> argsMod, List<AbstractCommand> commands) {
         try {
-            for (AbstractCommand command : commands) {
-                if (command.canHandle(argsMod)) {
-                    reporter.showWelcomeMessage();
-                    long t0 = System.currentTimeMillis();
-                    command.handle(argsMod);
-                    reporter.logTrace("Command " + command.getClass().getSimpleName() + " finished in " + (System.currentTimeMillis() - t0) / 1000 + "s.");
-                    reporter.showGoodbyeMessage();
-                    System.exit(0);
-                }
+            if (executeCommand(argsMod, commands, reporter)) {
+                reporter.showGoodbyeMessage();
+                System.exit(0);
             }
             System.err.println("Invalid command: " + argsMod);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             System.err.println("Error on run: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
     }
 
+    /** Run many commands, stop on error */
+    private static void runManyCommands(String filename, Reporter reporter, List<AbstractCommand> commands) throws IOException {
+        for (String line: Files.readAllLines(Paths.get(URI.create(filename)))) {
+            try {
+                // TODO: support spaces in '"'
+                if (!executeCommand(Arrays.asList(line.split(" ")), commands, reporter)) {
+                    System.err.println("Invalid command: " + line);
+                    System.exit(0);
+                }
+            } catch (RuntimeException e) {
+                System.err.println("Error while running " + line + ": " + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
+        reporter.showGoodbyeMessage();
+        System.exit(0);
+    }
+
+    /**
+     *
+     * @param args command-line arguments
+     * @param commands every runnable commands
+     * @param reporter where to report informations
+     * @return true if command has been found and executed
+     */
+    private static boolean executeCommand(List<String> args, List<AbstractCommand> commands, Reporter reporter) {
+        for (AbstractCommand command : commands) {
+            if (command.canHandle(args)) {
+                long t0 = System.currentTimeMillis();
+                command.handle(args);
+                reporter.logTrace("Command " + command.getClass().getSimpleName() + " finished in " + (System.currentTimeMillis() - t0) / 1000 + "s.");
+                return true;
+            }
+        }
+        return false;
+    }
 
 
 

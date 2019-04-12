@@ -26,11 +26,12 @@ public class KarafSSHTransport implements AutoCloseable {
     public static final int CONNECTION_NB_RETRY = 3;
     public static final int CONNECTION_RETRY_DELAY_SEC = 10;
     private ClientSession session;
+    private SshClient client;
     public static Logger LOG = LoggerFactory.getLogger(KarafSSHTransport.class);
 
     KarafSSHTransport(String hostname, int port, String user, String password) {
         try {
-            SshClient client = ClientBuilder.builder().build();
+            client = ClientBuilder.builder().build();
             client.getProperties().put("idle-timeout", String.valueOf(IDLE_TIMEOUT));
             client.setKeyPairProvider(new FileKeyPairProvider());
             client.start();
@@ -45,27 +46,29 @@ public class KarafSSHTransport implements AutoCloseable {
 
     public String execute(String command) throws IOException {
         LOG.info("   > " + command);
-        ChannelExec channel = session.createExecChannel(command + "\n");
-        channel.setIn(new ByteArrayInputStream(new byte[0]));
-        channel.setAgentForwarding(true);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ByteArrayOutputStream err = new ByteArrayOutputStream();
-        channel.setOut(out);
-        channel.setErr(err);
-        channel.open().verify();
-        channel.waitFor(EnumSet.of(ClientChannelEvent.CLOSED), 0L);
-        String res = out.toString("UTF-8");
-        LOG.info("   < " + res);
-        String errStr = err.toString("UTF-8");
-        if (errStr != null && !errStr.isEmpty()) {
-            LOG.info("   < ERR:" + err);
-            throw new RuntimeException(errStr);
+        try (ChannelExec channel = session.createExecChannel(command + "\n");
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ByteArrayOutputStream err = new ByteArrayOutputStream()
+        ) {
+            channel.setIn(new ByteArrayInputStream(new byte[0]));
+            channel.setAgentForwarding(true);
+            channel.setOut(out);
+            channel.setErr(err);
+            channel.open().verify();
+            channel.waitFor(EnumSet.of(ClientChannelEvent.CLOSED), 0L);
+            String res = out.toString("UTF-8");
+            LOG.info("   < " + res);
+            String errStr = err.toString("UTF-8");
+            if (errStr != null && !errStr.isEmpty()) {
+                LOG.info("   < ERR:" + err);
+                throw new RuntimeException(errStr);
+            }
+            return res;
         }
-        return res;
     }
 
 
-    private static ClientSession connectWithRetries(SshClient client, String user, String host, int port, int nbRetry, int retryDelaySec) throws Exception, InterruptedException {
+    private static ClientSession connectWithRetries(SshClient client, String user, String host, int port, int nbRetry, int retryDelaySec) throws Exception {
         ClientSession session = null;
         int retries = 0;
 
@@ -91,6 +94,12 @@ public class KarafSSHTransport implements AutoCloseable {
 
     @Override
     public void close() throws Exception {
+        try {
+            client.stop();
+            client.close();
+        } catch (Exception e) {
+            // Do nothing
+        }
         try {
             session.close();
         } catch (Exception e) {

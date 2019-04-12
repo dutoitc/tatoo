@@ -7,6 +7,7 @@ import ch.mno.tatoo.facade.commandline.TalendCommandLineWrapper;
 import ch.mno.tatoo.facade.commandline.data.Job;
 import ch.mno.tatoo.facade.commandline.data.Route;
 import ch.mno.tatoo.facade.commandline.data.Service;
+import ch.mno.tatoo.facade.common.FacadeException;
 import ch.mno.tatoo.facade.common.MessageHandler;
 import ch.mno.tatoo.facade.nexus.NexusEntry;
 import ch.mno.tatoo.facade.nexus.NexusFacade;
@@ -143,8 +144,7 @@ public class Main {
     /**
      * Check on Nexus if (publishedVersion) exists, or skip if ignoreVersionCheck==true
      */
-    private static void ensureVersionDoesNotAlreadyExist(Context context, String publishedVersion, boolean ignoreVersionCheck) throws InterruptedException, IOException,
-            URISyntaxException {
+    private static void ensureVersionDoesNotAlreadyExist(Context context, String publishedVersion, boolean ignoreVersionCheck) throws FacadeException {
         LOG.info("Checking on Nexus if version " + publishedVersion + " is already used...");
         if (ignoreVersionCheck) {
             LOG.info("  ... skipping version check (argument ignoreVersionCheck specified)");
