@@ -84,6 +84,7 @@ public class CleanupCommand extends AbstractCommand {
         Set<ExecutionPlan> plansToBeDeleted = new HashSet<>();
         Set<JobTask> tasksToBeDeleted = new HashSet<>();
         Set<ESBTask> esbTasksToBeDeleted = new HashSet<>();
+        String appGroupId = properties.get(RuntimeProperties.PROPERTIES.APPLICATION_GROUPID);
 
 
         // Find plans and tasks to be deleted
@@ -174,7 +175,7 @@ public class CleanupCommand extends AbstractCommand {
                 try (
                         KarafFacade kf = buildKarafFacade();
                 ) {
-                    kf.execute(new KarafCleanAction(patternStr));
+                    kf.execute(new KarafCleanAction(appGroupId, patternStr));
                 }
             }
 
